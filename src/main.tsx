@@ -3,15 +3,12 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import '@mantine/core/styles.css';
+import '@mantine/dropzone/styles.css';
+import '@mantine/nprogress/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { Provider } from 'react-redux';
-import store from './store/store';
+import store from './shared/model/store.ts';
 import './i18n';
-import '@mantine/dropzone/styles.css';
-import '@mantine/modals/styles.css';
-import '@mantine/nprogress/styles.css';
-import '@mantine/chart/styles.css';
-import '@mantine/form/styles.css';
 
 createRoot(document.getElementById('root')!).render(
   <MantineProvider>
