@@ -10,6 +10,8 @@ import './i18n';
 import '@mantine/dropzone/styles.css';
 import '@mantine/modals/styles.css';
 import '@mantine/nprogress/styles.css';
+import '@mantine/chart/styles.css';
+import '@mantine/form/styles.css';
 
 createRoot(document.getElementById('root')!).render(
   <MantineProvider>
