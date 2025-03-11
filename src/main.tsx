@@ -9,11 +9,13 @@ import { MantineProvider } from '@mantine/core';
 import { Provider } from 'react-redux';
 import store from './shared/model/store.ts';
 import './i18n';
+import { router } from './shared/config/router/router.tsx';
+import { RouterProvider } from 'react-router-dom';
 
 createRoot(document.getElementById('root')!).render(
   <MantineProvider>
     <Provider store={store}>
-      <App />
+      <RouterProvider router={router} />
     </Provider>
   </MantineProvider>
 );
