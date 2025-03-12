@@ -1,5 +1,6 @@
 export enum EAppRoutes {
-  Home = '/',
+  Main = '/',
+  Auth = '/authorization',
   Login = '/authorization/login',
   Registration = '/authorization/register',
 }

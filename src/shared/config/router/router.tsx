@@ -1,9 +1,4 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  redirect,
-  RouterProvider,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import App from '../../../App';
 import LoginPage from '../../../pages/login/login-page';
 import RegisterPage from '../../../pages/register/register-page';
@@ -12,21 +7,17 @@ import { EAppRoutes } from '../../types/routes';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
+    path: EAppRoutes.Main,
     element: <App />,
     children: [
       {
         path: '',
         element: 'home',
       },
-      {
-        path: '/home',
-        element: 'home',
-      },
     ],
   },
   {
-    path: '/authorization',
+    path: EAppRoutes.Auth,
     element: <AuthorizationLayout />,
     children: [
       {
