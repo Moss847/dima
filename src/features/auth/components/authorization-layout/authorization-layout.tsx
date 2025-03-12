@@ -1,6 +1,7 @@
 import { Box } from '@mantine/core';
+import { Outlet } from 'react-router-dom';
 
-export function AuthorizationLayout({ children }: { children: any }) {
+export function AuthorizationLayout() {
   return (
     <Box
       style={{
@@ -12,7 +13,7 @@ export function AuthorizationLayout({ children }: { children: any }) {
         transform: 'translateY(-50%)',
       }}
     >
-      {children}
+      <Outlet />{' '}
     </Box>
   );
 }

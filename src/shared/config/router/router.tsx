@@ -7,6 +7,7 @@ import {
 import App from '../../../App';
 import LoginPage from '../../../pages/login/LoginPage';
 import RegisterPage from '../../../pages/register/RegisterPage';
+import { AuthorizationLayout } from '../../../features/auth/components/authorization-layout/AuthorizationLayout';
 
 export const router = createBrowserRouter([
   {
@@ -29,7 +30,7 @@ export const router = createBrowserRouter([
   },
   {
     path: '/authorization',
-    element: <App />,
+    element: <AuthorizationLayout />,
     children: [
       {
         path: '',

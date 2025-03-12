@@ -8,6 +8,8 @@ import {
   Title,
   Text,
 } from '@mantine/core';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface LoginFormData {
   email: string;
@@ -22,35 +24,42 @@ export function LoginForm() {
     formState: { errors },
   } = useForm<LoginFormData>();
 
+  const { t, i18n } = useTranslation();
+
   const onSubmit = (data: LoginFormData) => {
     console.log(data);
+  };
+
+  const changeLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLang);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
       <Title order={2} mb="md">
-        Nice to see you again
+        {t('welcome')}
       </Title>
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>Email</span>}
-        placeholder="Enter your email"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('email')}</span>}
+        placeholder={t('enterEmail')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('email', {
-          required: 'Email is required',
+          required: t('requiredEmail'),
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Invalid email address',
+            message: t('invalidEmail'),
           },
         })}
         error={errors.email?.message}
       />
 
       <PasswordInput
-        label={<span style={{ fontSize: '0.6rem' }}>Password</span>}
-        placeholder="Enter your password"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('password')}</span>}
+        placeholder={t('enterPassword')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
@@ -58,25 +67,29 @@ export function LoginForm() {
           required: 'Password is required',
           minLength: {
             value: 10,
-            message: 'Password must be at least 10 characters',
+            message: t('minLength'),
           },
           maxLength: {
             value: 20,
-            message: 'Password must be at most 20 characters',
+            message: t('maxLength'),
           },
         })}
         error={errors.password?.message}
       />
 
-      <Checkbox label="Remember me" mb="md" />
+      <Checkbox label={t('rememberMe')} mb="md" />
 
       <Button fullWidth mb="md" style={{ width: '100%' }} type="submit">
-        Sign In
+        {t('signIn')}
       </Button>
 
       <Text size="sm" style={{ textAlign: 'center' }}>
-        Don't have an account? <a href="/authorization/register">Sign up now</a>
+        {t('signIn')} <Link to="/authorization/register">{t('signUp')}</Link>
       </Text>
+
+      <Button onClick={changeLanguage}>
+        {i18n.language === 'en' ? 'RU' : 'EN'}
+      </Button>
     </Box>
   );
 }

@@ -7,6 +7,8 @@ import {
   Title,
   Text,
 } from '@mantine/core';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 interface FormData {
   email: string;
@@ -22,99 +24,110 @@ export function RegistrationForm() {
     formState: { errors },
   } = useForm<FormData>();
 
+  const { t, i18n } = useTranslation();
+
   const onSubmit = (data: FormData) => {
     console.log(data);
+  };
+
+  const changeLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLang);
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
       <Title order={2} mb="md" style={{ textAlign: 'center' }}>
-        Create an account
+        {t('createAcc')}
       </Title>
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>Email</span>}
-        placeholder="Enter your email"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('email')}</span>}
+        placeholder={t('enterEmail')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('email', {
-          required: 'Email is required',
+          required: t('requiredEmail'),
           pattern: {
             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-            message: 'Invalid email address',
+            message: t('invalidEmail'),
           },
         })}
         error={errors.email?.message}
       />
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>Name</span>}
-        placeholder="Enter your name"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('name')}</span>}
+        placeholder={t('enterName')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('name', {
-          required: 'Name is required',
+          required: t('requiredName'),
           minLength: {
-            value: 5,
-            message: 'Name must be at least 5 characters',
+            value: 2,
+            message: t('nameMin'),
           },
           maxLength: {
             value: 15,
-            message: 'Name must be at most 15 characters',
+            message: t('nameMax'),
           },
         })}
         error={errors.name?.message}
       />
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>Surname</span>}
-        placeholder="Enter your surname"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('surName')}</span>}
+        placeholder={t('enterSurName')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('surname', {
-          required: 'Surname is required',
+          required: t('requiredSurName'),
           minLength: {
-            value: 8,
-            message: 'Surname must be at least 8 characters',
+            value: 2,
+            message: t('surNameMin'),
           },
           maxLength: {
-            value: 13,
-            message: 'Surname must be at most 13 characters',
+            value: 15,
+            message: t('surNameMax'),
           },
         })}
         error={errors.surname?.message}
       />
 
       <PasswordInput
-        label={<span style={{ fontSize: '0.6rem' }}>Password</span>}
-        placeholder="Enter your password"
+        label={<span style={{ fontSize: '0.6rem' }}>{t('password')}</span>}
+        placeholder={t('enterPassword')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('password', {
-          required: 'Password is required',
+          required: t('requiredPassword'),
           minLength: {
             value: 10,
-            message: 'Password must be at least 10 characters',
+            message: t('minLength'),
           },
           maxLength: {
             value: 20,
-            message: 'Password must be at most 20 characters',
+            message: t('maxLength'),
           },
         })}
         error={errors.password?.message}
       />
 
       <Button type="submit" fullWidth mb="md" style={{ width: '100%' }}>
-        Sign Up
+        {t('signUp')}
       </Button>
 
       <Text size="sm" style={{ textAlign: 'center' }}>
-        Already have an account? <a href="/authorization/login">Sign in</a>
+        {t('yesAccount')} <Link to="/authorization/login">{t('signIn')}</Link>
       </Text>
+
+      <Button onClick={changeLanguage}>
+        {i18n.language === 'en' ? 'RU' : 'EN'}
+      </Button>
     </Box>
   );
 }
