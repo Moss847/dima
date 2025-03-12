@@ -5,9 +5,10 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 import App from '../../../App';
-import LoginPage from '../../../pages/login/LoginPage';
-import RegisterPage from '../../../pages/register/RegisterPage';
-import { AuthorizationLayout } from '../../../features/auth/components/authorization-layout/AuthorizationLayout';
+import LoginPage from '../../../pages/login/login-page';
+import RegisterPage from '../../../pages/register/register-page';
+import { AuthorizationLayout } from '../../../features/auth/components/authorization-layout/authorization-layout';
+import { EAppRoutes } from '../../types/routes';
 
 export const router = createBrowserRouter([
   {
@@ -22,10 +23,6 @@ export const router = createBrowserRouter([
         path: '/home',
         element: 'home',
       },
-      {
-        path: '/about',
-        element: 'about',
-      },
     ],
   },
   {
@@ -34,14 +31,14 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '',
-        element: <Navigate to="login" replace />,
+        element: <Navigate to={EAppRoutes.Login} replace />,
       },
       {
-        path: 'login',
+        path: EAppRoutes.Login,
         element: <LoginPage />,
       },
       {
-        path: 'register',
+        path: EAppRoutes.Registration,
         element: <RegisterPage />,
       },
     ],

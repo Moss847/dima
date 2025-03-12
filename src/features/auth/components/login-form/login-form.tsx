@@ -10,6 +10,7 @@ import {
 } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { EAppRoutes } from '../../../../shared/types/routes';
 
 interface LoginFormData {
   email: string;
@@ -84,7 +85,7 @@ export function LoginForm() {
       </Button>
 
       <Text size="sm" style={{ textAlign: 'center' }}>
-        {t('signIn')} <Link to="/authorization/register">{t('signUp')}</Link>
+        {t('signIn')} <Link to={EAppRoutes.Registration}>{t('signUp')}</Link>
       </Text>
 
       <Button onClick={changeLanguage}>
