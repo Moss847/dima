@@ -11,6 +11,9 @@ import {
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { login as loginUser, AuthResponse } from '../../api/auth-api';
 
 interface LoginFormData {
   email: string;
@@ -35,6 +38,19 @@ export function LoginForm() {
     const newLang = i18n.language === 'en' ? 'ru' : 'en';
     i18n.changeLanguage(newLang);
   };
+
+  const navigate = useNavigate();
+
+  const mutation = useMutation<AuthResponse, Error, LoginFormData>({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.token);
+      navigate(EAppRoutes.Main);
+    },
+    onError: (error) => {
+      console.error('Ошибка входа:', error);
+    },
+  });
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -81,8 +97,14 @@ export function LoginForm() {
       <Checkbox label={t('rememberMe')} mb="md" />
 
       <Button fullWidth mb="md" style={{ width: '100%' }} type="submit">
-        {t('signIn')}
+        {mutation.isPending ? t('loading') : t('signIn')}
       </Button>
+
+      {mutation.isError && (
+        <Text color="red" size="sm" style={{ textAlign: 'center' }}>
+          {t('loginError')}
+        </Text>
+      )}
 
       <Text size="sm" style={{ textAlign: 'center' }}>
         {t('signIn')} <Link to={EAppRoutes.Registration}>{t('signUp')}</Link>

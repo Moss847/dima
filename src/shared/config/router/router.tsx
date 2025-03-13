@@ -5,25 +5,21 @@ import RegisterPage from '../../../pages/register/register-page';
 import { AuthorizationLayout } from '../../../features/auth/components/authorization-layout/authorization-layout';
 import { EAppRoutes } from '../../types/routes';
 
+const isAuthenticated = !!localStorage.getItem('token');
+
 export const router = createBrowserRouter([
   {
     path: EAppRoutes.Main,
-    element: <App />,
-    children: [
-      {
-        path: '',
-        element: 'home',
-      },
-    ],
+    element: isAuthenticated ? (
+      <App />
+    ) : (
+      <Navigate to={EAppRoutes.Login} replace />
+    ),
   },
   {
     path: EAppRoutes.Auth,
     element: <AuthorizationLayout />,
     children: [
-      {
-        path: '',
-        element: <Navigate to={EAppRoutes.Login} replace />,
-      },
       {
         path: EAppRoutes.Login,
         element: <LoginPage />,

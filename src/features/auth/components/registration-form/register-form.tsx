@@ -6,16 +6,24 @@ import {
   Box,
   Title,
   Text,
+  Alert,
 } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { register as registerUser } from '../../api/auth-api';
 
 interface FormData {
   email: string;
   name: string;
   surname: string;
   password: string;
+}
+
+interface AuthResponse {
+  token: string;
 }
 
 export function RegistrationForm() {
@@ -36,11 +44,30 @@ export function RegistrationForm() {
     i18n.changeLanguage(newLang);
   };
 
+  const navigate = useNavigate();
+
+  const mutation = useMutation<AuthResponse, Error, FormData>({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.token);
+      navigate(EAppRoutes.Main);
+    },
+    onError: (error: any) => {
+      console.error('Ошибка регистрации:', error.response?.data || error);
+    },
+  });
+
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
       <Title order={2} mb="md" style={{ textAlign: 'center' }}>
         {t('createAcc')}
       </Title>
+
+      {mutation.isError && (
+        <Alert color="red" mb="md">
+          {t('registrationError')}
+        </Alert>
+      )}
 
       <TextInput
         label={<span style={{ fontSize: '0.6rem' }}>{t('email')}</span>}
