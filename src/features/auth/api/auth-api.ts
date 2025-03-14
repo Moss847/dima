@@ -41,6 +41,8 @@ export const register = async (data: RegisterData): Promise<AuthResponse> => {
 };
 
 export const checkAuth = async (): Promise<AuthResponse> => {
-  const response = await axios.get<AuthResponse>('/users/me');
+  const response = await api.get<AuthResponse>('/users/refresh', {
+    withCredentials: true,
+  });
   return response.data;
 };

@@ -1,21 +1,25 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { checkAuth, AuthResponse } from '../api/auth-api';
+import { useEffect } from 'react';
 
 export const useAuth = (): UseQueryResult<AuthResponse, Error> => {
-  return useQuery<AuthResponse, Error>({
+  const queryResult = useQuery<AuthResponse, Error>({
     queryKey: ['auth'],
-    queryFn: async () => {
-      try {
-        const data = await checkAuth();
-        if (data?.accessToken) {
-          localStorage.setItem('token', data.accessToken);
-        }
-        return data;
-      } catch (error) {
-        localStorage.removeItem('token');
-        throw error;
-      }
-    },
+    queryFn: checkAuth,
     retry: false,
   });
+
+  useEffect(() => {
+    if (queryResult.data?.accessToken) {
+      localStorage.setItem('token', queryResult.data.accessToken);
+    }
+  }, [queryResult.data]);
+
+  useEffect(() => {
+    if (queryResult.error) {
+      localStorage.removeItem('token');
+    }
+  }, [queryResult.error]);
+
+  return queryResult;
 };
