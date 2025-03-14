@@ -31,16 +31,16 @@ export interface RegisterData {
 }
 
 export const login = async (data: LoginData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/auth/login', data);
+  const response = await api.post<AuthResponse>('/users/login', data);
   return response.data;
 };
 
 export const register = async (data: RegisterData): Promise<AuthResponse> => {
-  const response = await api.post<AuthResponse>('/auth/register', data);
+  const response = await api.post<AuthResponse>('/users/register', data);
   return response.data;
 };
 
 export const checkAuth = async (): Promise<AuthResponse> => {
-  const response = await axios.get<AuthResponse>('/auth/me');
+  const response = await axios.get<AuthResponse>('/users/me');
   return response.data;
 };
