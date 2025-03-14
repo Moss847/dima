@@ -22,10 +22,6 @@ interface FormData {
   password: string;
 }
 
-interface AuthResponse {
-  token: string;
-}
-
 export function RegistrationForm() {
   const {
     register,
@@ -34,28 +30,27 @@ export function RegistrationForm() {
   } = useForm<FormData>();
 
   const { t, i18n } = useTranslation();
-
-  const onSubmit = (data: FormData) => {
-    console.log(data);
-  };
-
-  const changeLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'ru' : 'en';
-    i18n.changeLanguage(newLang);
-  };
-
   const navigate = useNavigate();
 
-  const mutation = useMutation<AuthResponse, Error, FormData>({
+  const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      localStorage.setItem('token', data.token);
+      localStorage.setItem('token', data.accessToken);
       navigate(EAppRoutes.Main);
     },
     onError: (error: any) => {
       console.error('Ошибка регистрации:', error.response?.data || error);
     },
   });
+
+  const onSubmit = (data: FormData) => {
+    mutation.mutate(data); // передаем данные в mutate
+  };
+
+  const changeLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLang);
+  };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
@@ -106,20 +101,20 @@ export function RegistrationForm() {
       />
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>{t('surName')}</span>}
-        placeholder={t('enterSurName')}
+        label={<span style={{ fontSize: '0.6rem' }}>{t('surname')}</span>}
+        placeholder={t('enterSurname')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('surname', {
-          required: t('requiredSurName'),
+          required: t('requiredSurname'),
           minLength: {
             value: 2,
-            message: t('surNameMin'),
+            message: t('surnameMin'),
           },
           maxLength: {
-            value: 15,
-            message: t('surNameMax'),
+            value: 20,
+            message: t('surnameMax'),
           },
         })}
         error={errors.surname?.message}
@@ -145,12 +140,23 @@ export function RegistrationForm() {
         error={errors.password?.message}
       />
 
-      <Button type="submit" fullWidth mb="md" style={{ width: '100%' }}>
-        {t('signUp')}
+      <Button
+        fullWidth
+        mb="md"
+        type="submit"
+        disabled={mutation.status === 'pending'}
+      >
+        {mutation.status === 'pending' ? t('loading') : t('signUp')}
       </Button>
 
+      {mutation.isError && (
+        <Text color="red" size="sm" style={{ textAlign: 'center' }}>
+          {t('registrationError')}
+        </Text>
+      )}
+
       <Text size="sm" style={{ textAlign: 'center' }}>
-        {t('yesAccount')} <Link to={EAppRoutes.Login}>{t('signIn')}</Link>
+        {t('haveAccount')} <Link to={EAppRoutes.Login}>{t('signIn')}</Link>
       </Text>
 
       <Button onClick={changeLanguage}>
