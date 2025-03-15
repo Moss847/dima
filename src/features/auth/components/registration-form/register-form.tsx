@@ -8,11 +8,10 @@ import {
   Text,
   Alert,
 } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
-import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { register as registerUser } from '../../api/auth-api';
 
 interface FormData {
@@ -31,20 +30,24 @@ export function RegistrationForm() {
 
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.accessToken);
-      navigate(EAppRoutes.Main);
+      queryClient.setQueryData(['auth'], data);
+      navigate(EAppRoutes.Login);
     },
     onError: (error: any) => {
       console.error('Ошибка регистрации:', error.response?.data || error);
+      alert(error.message || 'Произошла ошибка при регистрации');
     },
   });
 
   const onSubmit = (data: FormData) => {
-    mutation.mutate(data); // передаем данные в mutate
+    console.log('Данные для регистрации:', data);
+    mutation.mutate(data);
   };
 
   const changeLanguage = () => {

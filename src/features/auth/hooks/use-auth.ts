@@ -1,25 +1,35 @@
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryResult,
+} from '@tanstack/react-query';
 import { checkAuth, AuthResponse } from '../api/auth-api';
 import { useEffect } from 'react';
 
 export const useAuth = (): UseQueryResult<AuthResponse, Error> => {
+  const queryClient = useQueryClient();
+
   const queryResult = useQuery<AuthResponse, Error>({
     queryKey: ['auth'],
-    queryFn: checkAuth,
+    queryFn: async () => {
+      const data = await checkAuth();
+      if (data?.accessToken) {
+        localStorage.setItem('token', data.accessToken);
+        queryClient.setQueryData(['auth'], data);
+      }
+      return data;
+    },
     retry: false,
+    staleTime: 1000 * 60 * 5,
+    initialData: () => queryClient.getQueryData(['auth']), // Используем данные из кэша
   });
-
-  useEffect(() => {
-    if (queryResult.data?.accessToken) {
-      localStorage.setItem('token', queryResult.data.accessToken);
-    }
-  }, [queryResult.data]);
 
   useEffect(() => {
     if (queryResult.error) {
       localStorage.removeItem('token');
+      queryClient.setQueryData(['auth'], null);
     }
-  }, [queryResult.error]);
+  }, [queryResult.error, queryClient]);
 
   return queryResult;
 };

@@ -12,7 +12,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { login as loginUser } from '../../api/auth-api';
 
@@ -31,20 +31,24 @@ export function LoginForm() {
 
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
       localStorage.setItem('token', data.accessToken);
+      queryClient.setQueryData(['auth'], data);
       navigate(EAppRoutes.Main);
     },
     onError: (error: any) => {
       console.error('Ошибка входа:', error.response?.data || error);
+      alert(error.message || 'Произошла ошибка при входе');
     },
   });
 
   const onSubmit = (data: FormData) => {
-    mutation.mutate(data); // передаем данные в mutate
+    console.log('Данные для входа:', data);
+    mutation.mutate(data);
   };
 
   const changeLanguage = () => {

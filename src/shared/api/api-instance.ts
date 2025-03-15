@@ -16,9 +16,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 let isRefreshing = false;
@@ -32,7 +30,7 @@ const onTokenRefreshed = (token: string) => {
 const refreshAutoToken = async () => {
   try {
     const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) throw new Error('Refresh token отсуствует');
+    if (!refreshToken) throw new Error('Refresh token отсутствует');
 
     const { data } = await axios.post<{
       accessToken: string;
@@ -59,11 +57,13 @@ api.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve) => {
           refreshSubscribers.push((token) => {
+            originalRequest.headers = originalRequest.headers || {};
             originalRequest.headers.Authorization = `Bearer ${token}`;
             resolve(api(originalRequest));
           });
         });
       }
+
       originalRequest._retry = true;
       isRefreshing = true;
 
@@ -78,6 +78,7 @@ api.interceptors.response.use(
         isRefreshing = false;
       }
     }
+
     return Promise.reject(error);
   }
 );

@@ -1,19 +1,35 @@
-import { Box } from '@mantine/core';
+import { Box, Image } from '@mantine/core';
 import { Outlet } from 'react-router-dom';
 
 export function AuthorizationLayout() {
   return (
     <Box
       style={{
-        maxWidth: 400,
-        width: '100%',
-        position: 'absolute',
-        right: '70px',
-        top: '40%',
-        transform: 'translateY(-50%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100%',
+        gap: '30px',
       }}
     >
-      <Outlet />{' '}
+      <Box>
+        <Image
+          src="/images/image.png"
+          alt="Авторизация"
+          width="100%"
+          radius="md"
+          height="100%"
+        />
+      </Box>
+
+      <Box
+        style={{
+          maxWidth: 400,
+          width: '100%',
+        }}
+      >
+        <Outlet />
+      </Box>
     </Box>
   );
 }
