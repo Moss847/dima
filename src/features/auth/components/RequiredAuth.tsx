@@ -1,8 +1,7 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/use-auth';
 import { EAppRoutes } from '../../../shared/types/routes';
-import { ReactNode, useEffect } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { ReactNode } from 'react';
 
 interface RequiredAuthProps {
   children: ReactNode;
@@ -10,13 +9,6 @@ interface RequiredAuthProps {
 
 export function RequiredAuth({ children }: RequiredAuthProps) {
   const { data: authData } = useAuth();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (authData) {
-      queryClient.setQueryData(['auth'], authData);
-    }
-  }, [authData, queryClient]);
 
   return authData?.accessToken ? (
     <>{children}</>

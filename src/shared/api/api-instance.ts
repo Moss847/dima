@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { checkAuth } from '../../features/auth/api/auth-api';
+import { EAppRoutes } from '../types/routes';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -29,21 +31,12 @@ const onTokenRefreshed = (token: string) => {
 
 const refreshAutoToken = async () => {
   try {
-    const refreshToken = localStorage.getItem('refreshToken');
-    if (!refreshToken) throw new Error('Refresh token отсутствует');
-
-    const { data } = await axios.post<{
-      accessToken: string;
-      refreshToken: string;
-    }>(`${import.meta.env.VITE_API_BASE_URL}/users/refresh`, { refreshToken });
-
+    const data = await checkAuth();
     localStorage.setItem('token', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
     return data.accessToken;
   } catch (error) {
     localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    window.location.href = '/login';
+    window.location.href = EAppRoutes.Login;
     throw error;
   }
 };

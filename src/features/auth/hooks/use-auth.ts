@@ -20,7 +20,7 @@ export const useAuth = (): UseQueryResult<AuthResponse, Error> => {
       return data;
     },
     retry: false,
-    staleTime: 1000 * 60 * 5,
+    staleTime: Infinity,
     initialData: () => queryClient.getQueryData(['auth']), // Используем данные из кэша
   });
 
