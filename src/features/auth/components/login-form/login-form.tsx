@@ -7,12 +7,16 @@ import {
   Checkbox,
   Title,
   Text,
+  Alert,
 } from '@mantine/core';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { login as loginUser } from '../../api/auth-api';
 
-interface LoginFormData {
+interface FormData {
   email: string;
   password: string;
   rememberMe?: boolean;
@@ -23,12 +27,28 @@ export function LoginForm() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>();
+  } = useForm<FormData>();
 
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+  const mutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.accessToken);
+      queryClient.setQueryData(['auth'], data);
+      navigate(EAppRoutes.Main);
+    },
+    onError: (error: any) => {
+      console.error('Ошибка входа:', error.response?.data || error);
+      alert(error.message || 'Произошла ошибка при входе');
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    console.log('Данные для входа:', data);
+    mutation.mutate(data);
   };
 
   const changeLanguage = () => {
@@ -38,9 +58,15 @@ export function LoginForm() {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)}>
-      <Title order={2} mb="md">
+      <Title order={2} mb="md" style={{ textAlign: 'center' }}>
         {t('welcome')}
       </Title>
+
+      {mutation.isError && (
+        <Alert color="red" mb="md">
+          {t('loginError')}
+        </Alert>
+      )}
 
       <TextInput
         label={<span style={{ fontSize: '0.6rem' }}>{t('email')}</span>}
@@ -65,7 +91,7 @@ export function LoginForm() {
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('password', {
-          required: 'Password is required',
+          required: t('requiredPassword'),
           minLength: {
             value: 10,
             message: t('minLength'),
@@ -78,14 +104,25 @@ export function LoginForm() {
         error={errors.password?.message}
       />
 
-      <Checkbox label={t('rememberMe')} mb="md" />
+      <Checkbox label={t('rememberMe')} mb="md" {...register('rememberMe')} />
 
-      <Button fullWidth mb="md" style={{ width: '100%' }} type="submit">
-        {t('signIn')}
+      <Button
+        fullWidth
+        mb="md"
+        type="submit"
+        disabled={mutation.status === 'pending'}
+      >
+        {mutation.status === 'pending' ? t('loading') : t('signIn')}
       </Button>
 
+      {mutation.isError && (
+        <Text color="red" size="sm" style={{ textAlign: 'center' }}>
+          {t('loginError')}
+        </Text>
+      )}
+
       <Text size="sm" style={{ textAlign: 'center' }}>
-        {t('signIn')} <Link to={EAppRoutes.Registration}>{t('signUp')}</Link>
+        {t('noAccount')} <Link to={EAppRoutes.Registration}>{t('signUp')}</Link>
       </Text>
 
       <Button onClick={changeLanguage}>

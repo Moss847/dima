@@ -11,11 +11,16 @@ import store from './shared/model/store.ts';
 import './i18n';
 import { router } from './shared/config/router/router.tsx';
 import { RouterProvider } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById('root')!).render(
-  <MantineProvider>
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
-  </MantineProvider>
+  <QueryClientProvider client={queryClient}>
+    <MantineProvider>
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
+    </MantineProvider>
+  </QueryClientProvider>
 );

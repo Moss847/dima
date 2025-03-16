@@ -6,10 +6,13 @@ import {
   Box,
   Title,
   Text,
+  Alert,
 } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { EAppRoutes } from '../../../../shared/types/routes';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { register as registerUser } from '../../api/auth-api';
 
 interface FormData {
   email: string;
@@ -26,9 +29,25 @@ export function RegistrationForm() {
   } = useForm<FormData>();
 
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: registerUser,
+    onSuccess: (data) => {
+      localStorage.setItem('token', data.accessToken);
+      queryClient.setQueryData(['auth'], data);
+      navigate(EAppRoutes.Login);
+    },
+    onError: (error: any) => {
+      console.error('Ошибка регистрации:', error.response?.data || error);
+      alert(error.message || 'Произошла ошибка при регистрации');
+    },
+  });
 
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    console.log('Данные для регистрации:', data);
+    mutation.mutate(data);
   };
 
   const changeLanguage = () => {
@@ -41,6 +60,12 @@ export function RegistrationForm() {
       <Title order={2} mb="md" style={{ textAlign: 'center' }}>
         {t('createAcc')}
       </Title>
+
+      {mutation.isError && (
+        <Alert color="red" mb="md">
+          {t('registrationError')}
+        </Alert>
+      )}
 
       <TextInput
         label={<span style={{ fontSize: '0.6rem' }}>{t('email')}</span>}
@@ -79,20 +104,20 @@ export function RegistrationForm() {
       />
 
       <TextInput
-        label={<span style={{ fontSize: '0.6rem' }}>{t('surName')}</span>}
-        placeholder={t('enterSurName')}
+        label={<span style={{ fontSize: '0.6rem' }}>{t('surname')}</span>}
+        placeholder={t('enterSurname')}
         required
         mb="md"
         styles={{ input: { backgroundColor: '#f0f0f0', width: '100%' } }}
         {...register('surname', {
-          required: t('requiredSurName'),
+          required: t('requiredSurname'),
           minLength: {
             value: 2,
-            message: t('surNameMin'),
+            message: t('surnameMin'),
           },
           maxLength: {
-            value: 15,
-            message: t('surNameMax'),
+            value: 20,
+            message: t('surnameMax'),
           },
         })}
         error={errors.surname?.message}
@@ -118,12 +143,23 @@ export function RegistrationForm() {
         error={errors.password?.message}
       />
 
-      <Button type="submit" fullWidth mb="md" style={{ width: '100%' }}>
-        {t('signUp')}
+      <Button
+        fullWidth
+        mb="md"
+        type="submit"
+        disabled={mutation.status === 'pending'}
+      >
+        {mutation.status === 'pending' ? t('loading') : t('signUp')}
       </Button>
 
+      {mutation.isError && (
+        <Text color="red" size="sm" style={{ textAlign: 'center' }}>
+          {t('registrationError')}
+        </Text>
+      )}
+
       <Text size="sm" style={{ textAlign: 'center' }}>
-        {t('yesAccount')} <Link to={EAppRoutes.Login}>{t('signIn')}</Link>
+        {t('haveAccount')} <Link to={EAppRoutes.Login}>{t('signIn')}</Link>
       </Text>
 
       <Button onClick={changeLanguage}>
