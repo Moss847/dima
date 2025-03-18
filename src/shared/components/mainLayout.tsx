@@ -1,5 +1,11 @@
-import { Box } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
+import Sidebar from '../../features/auth/components/side-bar/side-bar';
 
 export function MainLayout({ children }: { children: any }) {
-  return <Box style={{ padding: '20px' }}>{children}</Box>;
+  return (
+    <Flex>
+      <Sidebar />
+      <Box style={{ padding: '20px', flex: 1 }}>{children}</Box>
+    </Flex>
+  );
 }

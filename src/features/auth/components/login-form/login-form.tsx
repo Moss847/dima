@@ -38,7 +38,7 @@ export function LoginForm() {
     onSuccess: (data) => {
       localStorage.setItem('token', data.accessToken);
       queryClient.setQueryData(['auth'], data);
-      navigate(EAppRoutes.Main);
+      navigate(EAppRoutes.Boards);
     },
     onError: (error: any) => {
       console.error('Ошибка входа:', error.response?.data || error);

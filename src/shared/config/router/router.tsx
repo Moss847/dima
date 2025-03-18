@@ -5,6 +5,8 @@ import RegisterPage from '../../../pages/register/register-page';
 import { AuthorizationLayout } from '../../../features/auth/components/authorization-layout/authorization-layout';
 import { EAppRoutes } from '../../types/routes';
 import { RequiredAuth } from '../../../features/auth/components/RequiredAuth';
+import BoardsPage from '../../../pages/boards/boards-page';
+import CreateBoardsPage from '../../../pages/boards/create-boards-page';
 
 export const router = createBrowserRouter([
   {
@@ -14,6 +16,16 @@ export const router = createBrowserRouter([
         <App />
       </RequiredAuth>
     ),
+    children: [
+      {
+        path: EAppRoutes.Boards,
+        element: <BoardsPage />,
+      },
+      {
+        path: 'boards/new',
+        element: <CreateBoardsPage />,
+      },
+    ],
   },
   {
     path: EAppRoutes.Auth,
