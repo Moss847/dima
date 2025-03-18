@@ -3,4 +3,5 @@ export enum EAppRoutes {
   Auth = '/authorization',
   Login = '/authorization/login',
   Registration = '/authorization/register',
+  Boards = '/boards',
 }

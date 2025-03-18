@@ -1,0 +1,29 @@
+.sidebar {
+  width: 250px;
+  padding: 20px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navLink {
+  text-decoration: none;
+  color: inherit;
+  padding: 10px;
+  border-radius: 5px;
+  display: block;
+}
+
+.navLink.active {
+  background-color: #f0f0f0;
+  font-weight: 600;
+}
+
+.userInfo {
+  margin-top: auto;
+  text-align: center;
+}
+
+.avatar {
+  margin-bottom: 10px;
+}

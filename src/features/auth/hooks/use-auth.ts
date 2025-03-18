@@ -21,7 +21,7 @@ export const useAuth = (): UseQueryResult<AuthResponse, Error> => {
     },
     retry: false,
     staleTime: Infinity,
-    initialData: () => queryClient.getQueryData(['auth']), // Используем данные из кэша
+    initialData: () => queryClient.getQueryData(['auth']),
   });
 
   useEffect(() => {
