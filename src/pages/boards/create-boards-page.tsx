@@ -12,18 +12,15 @@ const CreateBoardsPage = () => {
   const { data: authData } = useAuth();
   const user = authData?.userInfo;
 
-  // Запрос для получения пользователей
   const { data: users = [] } = useQuery<IUser[]>({
     queryKey: ['users'],
     queryFn: getUsers,
   });
 
-  // Состояния для формы
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [members, setMembers] = useState<string[]>([]);
 
-  // Мутация для создания доски
   const createMutation = useMutation({
     mutationFn: createBoard,
     onSuccess: () => navigate('/boards'),
@@ -32,7 +29,6 @@ const CreateBoardsPage = () => {
     },
   });
 
-  // Обработка отправки формы
   const handleSubmit = () => {
     if (!user) return;
 
